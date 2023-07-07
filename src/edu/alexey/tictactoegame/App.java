@@ -40,7 +40,7 @@ public class App {
 
         var difficulty = difficultyOpt.getAsInt() == 0 ? Difficulty.EASY : Difficulty.HARD;
 
-        var game = new Game(scanner, 3, difficulty);
+        var game = new Game(scanner, dimOpt.getAsInt(), difficulty);
         game.run();
     }
 
