@@ -40,6 +40,10 @@ public class GameDeskRenderer {
 		}
 	}
 
+	public void setWinnerIndices(int[] indices) {
+		winnerIndices = indices;
+	}
+
 	private void renderGamersState(Gamer highlighted) {
 		// final int legendLen = 1 + 6 + X_NAME.length() + O_NAME.length();
 		String xName = X_NAME;
@@ -116,7 +120,7 @@ public class GameDeskRenderer {
 		return cellString;
 	}
 
-	private static String cellNameByIndex(int index) {
+	public static String cellNameByIndex(int index) {
 		return Integer.toString(index + 1);
 	}
 

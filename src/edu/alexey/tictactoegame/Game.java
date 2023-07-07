@@ -15,6 +15,7 @@ public class Game {
 
 	private boolean gameOver;
 	private State winner;
+	private int[] winnerLine;
 
 	private Gamer whoseTurn;
 	private Gamer human;
@@ -59,17 +60,63 @@ public class Game {
 			whoStr = "крестиками";
 			who = Gamer.X;
 		}
-		System.out.println("Пользователь играет " + whoStr + "!");
-		System.out.println("Первыми ходят крестики.");
-		ConsoleUtils.waitToProceed(scanner, "Нажмите Enter чтобы начать...");
+		System.out.println("\nПользователь играет " + whoStr + "!");
+		System.out.println("Первыми ходят крестики.\n");
+		// ConsoleUtils.waitToProceed(scanner, "Нажмите Enter чтобы начать...");
 
 		return who;
 	}
 
 	private void goTurn() {
+		var whoseNext = Gamer.opponent(whoseTurn);
+
+		if (whoseTurn.equals(human)) {
+			// логика для человека
+			var cellNumberOpt = ConsoleUtils.askInteger(
+					scanner,
+					"Ваш ход (или пуcтой ввод чтобы выйти): ",
+					num -> gameDesk.cellState(num - 1).equals(State.NONE),
+					"Некорректный ввод: ячейка занята или вне допустимого диапазона. "
+							+ ConsoleUtils.PLEASE_REPEAT);
+
+			if (cellNumberOpt.isEmpty()) {
+				System.out.println("\nИгра прервана и приложение будет закрыто.");
+				ConsoleUtils.waitToProceed(scanner);
+				System.exit(0);
+			}
+
+			gameDesk.setCell(cellNumberOpt.getAsInt() - 1, State.byGamer(whoseTurn));
+
+		} else {
+			// логика для ИИ
+			int index = gameDesk.findAnyEmptyCellIndex().getAsInt();
+
+			if (difficulty.equals(Difficulty.HARD)) {
+				var optimumIndexOpt = gameDesk.findOptimumCellIndex(whoseTurn);
+				if (optimumIndexOpt.isPresent()) {
+					index = optimumIndexOpt.getAsInt();
+				}
+			}
+
+			gameDesk.setCell(index, State.byGamer(whoseTurn));
+			// renderer.render(whoseTurn);
+
+			try {
+				Thread.sleep(500);
+				System.out.printf("ИИ сделал ход в ячейку %s. ", GameDeskRenderer.cellNameByIndex(index));
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+			}
+		}
+
+		whoseTurn = whoseNext;
 	}
 
 	private void checkForWinner() {
+		var deskState = gameDesk.update();
+		gameOver = deskState.gameOver();
+		winnerLine = deskState.winnerLine();
+		winner = deskState.winner();
 	}
 
 	private void congratulations() {
@@ -84,15 +131,19 @@ public class Game {
 	}
 
 	public void run() {
+
 		human = tossWhoHuman();
 		whoseTurn = Gamer.X;
 
 		while (!gameOver) {
+			ConsoleUtils.waitToProceed(scanner);
 			renderer.render(whoseTurn);
 			goTurn();
 			checkForWinner();
 		}
 
+		renderer.setWinnerIndices(winnerLine);
+		renderer.render(whoseTurn);
 		congratulations();
 	}
 

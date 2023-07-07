@@ -2,6 +2,7 @@ package edu.alexey.tictactoegame;
 
 import java.util.Arrays;
 import java.util.OptionalInt;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -58,7 +59,12 @@ public class GameDesk {
 		return desk.length;
 	}
 
-	public DeskState checkGameOver() {
+	public void setCell(int index, State cellState) {
+		assert index >= 0 && index < desk.length;
+		desk[index] = cellState;
+	}
+
+	public DeskState update() {
 
 		boolean nooneCanWin = true;
 
@@ -145,6 +151,24 @@ public class GameDesk {
 			return indexOfAnyOccurrence(opponentMaxFilledLine, State.NONE);
 		}
 		return OptionalInt.empty();
+	}
+
+	public OptionalInt findAnyEmptyCellIndex() {
+		int[] emptyCellsIndices = IntStream.range(0, desk.length)
+				.filter(i -> desk[i].equals(State.NONE)).toArray();
+		if (emptyCellsIndices.length == 0) {
+			return OptionalInt.empty();
+		}
+
+		int iRnd = ThreadLocalRandom.current().nextInt(0, emptyCellsIndices.length);
+		return OptionalInt.of(emptyCellsIndices[iRnd]);
+
+		// for (int i = 0; i < desk.length; ++i) {
+		// if (desk[i].equals(State.NONE)) {
+		// return OptionalInt.of(i);
+		// }
+		// }
+		// return OptionalInt.empty();
 	}
 
 	private boolean hasEmptyCells(int[] line) {
