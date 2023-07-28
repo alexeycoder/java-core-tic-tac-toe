@@ -74,13 +74,16 @@ public class Game {
 			// логика для человека
 			var cellNumberOpt = ConsoleUtils.askInteger(
 					scanner,
-					"Ваш ход (или пуcтой ввод чтобы выйти): ",
+					"Ваш ход (или пуcтой ввод чтобы сохранить игру и выйти): ",
 					num -> gameDesk.cellState(num - 1).equals(State.NONE),
 					"Некорректный ввод: ячейка занята или вне допустимого диапазона. "
 							+ ConsoleUtils.PLEASE_REPEAT);
 
 			if (cellNumberOpt.isEmpty()) {
-				System.out.println("\nИгра прервана и приложение будет закрыто.");
+
+				GameSaver.save(gameDesk, human);
+
+				System.out.println("\nИгра прервана и сохранена, приложение будет закрыто.");
 				ConsoleUtils.waitToProceed(scanner);
 				System.exit(0);
 			}
