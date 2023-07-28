@@ -5,6 +5,7 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 public class ConsoleUtils {
+	
 	public static final String PLEASE_REPEAT = "Пожалуйста попробуйте снова.";
 	private static final String PROMPT_RETURN = "Нажмите Ввод чтобы продолжить...";
 

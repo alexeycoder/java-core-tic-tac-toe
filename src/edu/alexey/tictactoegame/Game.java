@@ -132,8 +132,20 @@ public class Game {
 
 	public void run() {
 
-		human = tossWhoHuman();
-		whoseTurn = Gamer.X;
+		if (GameSaver.isThereSave()) {
+			System.out.println("Обнаружена сохранённая игра. ");
+			if (ConsoleUtils.askYesNo(scanner, "Желаете продолжить сохранённую игру (Y/n)", true)) {
+				human = GameSaver.restore(gameDesk);
+				whoseTurn = human;
+
+			} else {
+				human = tossWhoHuman();
+				whoseTurn = Gamer.X;
+			}
+		} else {
+			human = tossWhoHuman();
+			whoseTurn = Gamer.X;
+		}
 
 		while (!gameOver) {
 			ConsoleUtils.waitToProceed(scanner);

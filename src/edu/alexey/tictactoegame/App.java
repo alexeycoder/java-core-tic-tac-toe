@@ -10,9 +10,11 @@ import edu.alexey.utils.UncloseableInputStream;
 
 public class App {
 
-    static final Locale LOCALE = Locale.of("ru", "RU");
+    static final Locale LOCALE = Locale.forLanguageTag("RU");
     static final Charset CHARSET = Charset.defaultCharset();
     static final Scanner scanner = new Scanner(UncloseableInputStream.wrap(System.in), CHARSET);
+
+    static final int DIM = 3;
 
     public static void main(String[] args) throws Exception {
         Locale.setDefault(LOCALE);
@@ -22,12 +24,12 @@ public class App {
         System.out.println(title);
         System.out.println(frame);
 
-        OptionalInt dimOpt = ConsoleUtils.askInteger(scanner,
-                "Задайте размер квадратного поля\n(пустой ввод чтобы завершить приложение): ",
-                2, Integer.MAX_VALUE);
-        if (dimOpt.isEmpty()) {
-            exit();
-        }
+        // OptionalInt dimOpt = ConsoleUtils.askInteger(scanner,
+        //         "Задайте размер квадратного поля\n(пустой ввод чтобы завершить приложение): ",
+        //         2, Integer.MAX_VALUE);
+        // if (dimOpt.isEmpty()) {
+        //     exit();
+        // }
 
         OptionalInt difficultyOpt = ConsoleUtils.askInteger(scanner,
                 "Задайте уровень сложности"
@@ -40,7 +42,7 @@ public class App {
 
         var difficulty = difficultyOpt.getAsInt() == 0 ? Difficulty.EASY : Difficulty.HARD;
 
-        var game = new Game(scanner, dimOpt.getAsInt(), difficulty);
+        var game = new Game(scanner, DIM, difficulty);
         game.run();
     }
 
